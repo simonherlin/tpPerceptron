@@ -7,6 +7,9 @@ class NeuroneStruct:
         self.out = out
         self.w = np.random.rand(lengthofw)
         self.step= 0.01
+        #self.step= 0.00001
+        #self.step= 0.08
+        #self.step= 0.5
 
     def get_step(self):
         return self.step
