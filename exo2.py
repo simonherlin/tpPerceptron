@@ -14,7 +14,7 @@ class NeuroneStruct:
     def get_step(self):
         return self.step
 
-    def set_x(self, step):
+    def set_step(self, step):
         self.step = step
 
     def maj(self, line):
@@ -22,7 +22,7 @@ class NeuroneStruct:
         for x in range(len(line)-1):
             self.w[x] += self.step * (line[len(line)-1]- self.out) * line[x]
 
-    def calculersortie(self, line):
+    def calculersortie(self, line, maj):
         score = 0.0
         for x in range(2):
             score += self.w[x]*line[x]
@@ -31,19 +31,55 @@ class NeuroneStruct:
             self.out = 1
         else:
             self.out = -1
-        if self.out != line[len(line)-1]:
+        if self.out != line[len(line)-1] and maj == True:
             self.maj(line)
         return self.out
 
-def run(w):
-    d = NeuroneStruct(0,0.5,2)
-    my_data = np.genfromtxt('result.txt', delimiter=' ')
-    for x in range(100):
+def app(neurone, datas):
+
+    ErrorsList = []
+    nberrors = 1
+
+    while nberrors != 0:
         nberrors = 0
-        for y in range(len(my_data)):
-            end = d.calculersortie(my_data[y])
-            if end != my_data[y][2]:
+
+        for y in range(len(datas)):
+            end = neurone.calculersortie(datas[y],maj=True)
+
+            if end != datas[y][2]:
                 nberrors += 1
+
+        print(nberrors)
+        ErrorsList.append(nberrors);
+
+    return ErrorsList
+
+def generalisation(neurone, datas):
+
+        nberrors = 0
+
+        for y in range(len(datas)):
+            end = neurone.calculersortie(datas[y],maj=False)
+
+            if end != datas[y][2]:
+                nberrors += 1
+
         print(nberrors)
 
-run(2)
+def lines(datas):
+
+    plt.plot(datas)
+    plt.show()
+
+
+
+
+myneurone = NeuroneStruct(0,0.5,2)
+app_datas = np.genfromtxt('app.csv', delimiter=' ')
+errorsarray=app(myneurone, app_datas)
+print("Generalisation -----------------------")
+gen_datas = np.genfromtxt('gen.csv', delimiter=' ')
+generalisation(myneurone,gen_datas)
+
+
+lines(errorsarray)
